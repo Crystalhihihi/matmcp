@@ -1,9 +1,0 @@
-pyproject.toml
-src/matmcp/__init__.py
-src/matmcp/config.py
-src/matmcp/server.py
-src/matmcp/workflows.py
-src/matmcp.egg-info/PKG-INFO
-src/matmcp.egg-info/SOURCES.txt
-src/matmcp.egg-info/dependency_links.txt
-src/matmcp.egg-info/top_level.txt

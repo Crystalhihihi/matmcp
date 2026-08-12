@@ -1,0 +1,27 @@
+{
+  "attempts": [
+    {
+      "attempt": 0,
+      "ecut_ev": 400,
+      "kpts_density": 25.0,
+      "relax_converged": true,
+      "params_converged": false,
+      "recommended": {
+        "ecut_ev": 800,
+        "kpts_density": 35.0
+      }
+    },
+    {
+      "attempt": 1,
+      "ecut_ev": 800,
+      "kpts_density": 35.0,
+      "relax_converged": true,
+      "params_converged": false,
+      "recommended": {
+        "ecut_ev": 800,
+        "kpts_density": 35.0
+      },
+      "note": "sweep ceiling: energy/gap not settled within tested range; results flagged lower-accuracy by verify_run"
+    }
+  ]
+}

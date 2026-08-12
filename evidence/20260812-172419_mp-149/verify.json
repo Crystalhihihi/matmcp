@@ -1,0 +1,37 @@
+{
+  "run_id": "20260812-172419_mp-149",
+  "verdict": "pass",
+  "checks": [
+    {
+      "check": "convergence_gate",
+      "status": "pass",
+      "detail": "ecut_converged=True, kpts_converged=True, recommended ecut=300 kd=35.0",
+      "fix": "sweep hit ceiling: extend range; treat results as lower accuracy"
+    },
+    {
+      "check": "relax_convergence",
+      "status": "pass",
+      "detail": "fmax=0.000 eV/A in 0 steps",
+      "fix": ""
+    },
+    {
+      "check": "structure_drift",
+      "status": "pass",
+      "detail": "max displacement 0.000 A (tol 0.5)",
+      "fix": "large drift: double-check the initial structure is sane"
+    },
+    {
+      "check": "band_gap_vs_mp",
+      "status": "pass",
+      "detail": "calc 0.594 eV vs MP ref 0.610 eV (|Δ|=0.016)",
+      "fix": "persistent mismatch: check k-grid/ecut convergence, structure phase, or whether the MP reference is the same polymorph"
+    },
+    {
+      "check": "gap_character",
+      "status": "info",
+      "detail": "indirect gap: VBM@Γ=5.2442 eV, CBM@[0.44,0.00,0.44]=5.8387 eV",
+      "fix": ""
+    }
+  ],
+  "blocking_failures": []
+}

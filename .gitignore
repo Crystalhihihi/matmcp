@@ -1,0 +1,13 @@
+# python
+__pycache__/
+*.pyc
+.venv/
+# runs & artifacts (large)
+runs/
+logs/
+*.gpw
+*.traj
+# os
+.DS_Store
+Thumbs.db
+docs/resume-draft.md

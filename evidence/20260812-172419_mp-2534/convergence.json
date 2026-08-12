@@ -1,0 +1,121 @@
+{
+  "run_id": "20260812-172419_mp-2534",
+  "tol_mev_per_atom": 5.0,
+  "tol_gap_ev": 0.02,
+  "ecut_sweep": [
+    {
+      "ecut_ev": 300,
+      "energy_ev": -8.090945542246708,
+      "gap_ev": 0.19102861952407846,
+      "delta_mev_per_atom": 0.9756717438005325,
+      "delta_gap_ev": 0.0002700633296361943
+    },
+    {
+      "ecut_ev": 400,
+      "energy_ev": -8.092896885734309,
+      "gap_ev": 0.19075855619444226,
+      "delta_mev_per_atom": 0.37644893337329677,
+      "delta_gap_ev": 6.975170214928994e-05
+    },
+    {
+      "ecut_ev": 500,
+      "energy_ev": -8.093649783601055,
+      "gap_ev": 0.19068880449229297,
+      "delta_mev_per_atom": 0.24301886611421963,
+      "delta_gap_ev": 5.103835156727854e-05
+    },
+    {
+      "ecut_ev": 600,
+      "energy_ev": -8.094135821333284,
+      "gap_ev": 0.1906377661407257,
+      "delta_mev_per_atom": 0.35509512554288136,
+      "delta_gap_ev": 7.85160353711234e-06
+    },
+    {
+      "ecut_ev": 800,
+      "energy_ev": -8.09484601158437,
+      "gap_ev": 0.19062991453718858,
+      "delta_mev_per_atom": null,
+      "delta_gap_ev": null
+    }
+  ],
+  "kpts_sweep": [
+    {
+      "kpts_density": 10.0,
+      "kpts": [
+        2,
+        2,
+        2
+      ],
+      "energy_ev": -5.902936062119539,
+      "gap_ev": 0.13184567257654756,
+      "delta_mev_per_atom": 1094.9804118073846,
+      "delta_gap_ev": 0.05891288361789471
+    },
+    {
+      "kpts_density": 15.0,
+      "kpts": [
+        4,
+        4,
+        4
+      ],
+      "energy_ev": -8.092896885734309,
+      "gap_ev": 0.19075855619444226,
+      "delta_mev_per_atom": 56.151519783763426,
+      "delta_gap_ev": 0.0073666764111379734
+    },
+    {
+      "kpts_density": 20.0,
+      "kpts": [
+        5,
+        5,
+        5
+      ],
+      "energy_ev": -8.205199925301836,
+      "gap_ev": 0.19812523260558024,
+      "delta_mev_per_atom": 18.790417586992625,
+      "delta_gap_ev": 0.003438656786837413
+    },
+    {
+      "kpts_density": 25.0,
+      "kpts": [
+        6,
+        6,
+        6
+      ],
+      "energy_ev": -8.24278076047582,
+      "gap_ev": 0.20156388939241765,
+      "delta_mev_per_atom": 11.381440584410818,
+      "delta_gap_ev": 0.0030351467659928133
+    },
+    {
+      "kpts_density": 35.0,
+      "kpts": [
+        9,
+        9,
+        9
+      ],
+      "energy_ev": -8.265543641644642,
+      "gap_ev": 0.20459903615841046,
+      "delta_mev_per_atom": 0.9668882832736259,
+      "delta_gap_ev": 0.0004177866628500837
+    },
+    {
+      "kpts_density": 45.0,
+      "kpts": [
+        11,
+        11,
+        11
+      ],
+      "energy_ev": -8.26747741821119,
+      "gap_ev": 0.20501682282126055,
+      "delta_mev_per_atom": null,
+      "delta_gap_ev": null
+    }
+  ],
+  "ecut_converged": true,
+  "kpts_converged": true,
+  "recommended_ecut_ev": 300,
+  "recommended_kpts_density": 35.0,
+  "converged": true
+}

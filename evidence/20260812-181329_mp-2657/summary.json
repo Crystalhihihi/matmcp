@@ -1,0 +1,37 @@
+{
+  "run_id": "20260812-181329_mp-2657",
+  "engine": "gpaw-pw",
+  "total_energy_ev": -103.69700105531751,
+  "fermi_ev": 6.517795285325111,
+  "band_gap_ev": 1.8754283953130457,
+  "gap_type": "direct",
+  "vbm": {
+    "k": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "label": "Γ",
+    "band": 47,
+    "energy_ev": 5.6142
+  },
+  "cbm": {
+    "k": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "label": "Γ",
+    "band": 48,
+    "energy_ev": 7.4896
+  },
+  "kpts_scf": [
+    5,
+    5,
+    5
+  ],
+  "ecut_ev": 600,
+  "band_path": "auto-3d",
+  "bands_png": "runs/20260812-181329_mp-2657/bands.png",
+  "dos_png": "runs/20260812-181329_mp-2657/dos.png"
+}

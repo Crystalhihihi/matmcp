@@ -1,0 +1,37 @@
+{
+  "run_id": "20260812-220421_mos2_854b",
+  "verdict": "pass",
+  "checks": [
+    {
+      "check": "convergence_gate",
+      "status": "pass",
+      "detail": "ecut_converged=True, kpts_converged=True, recommended ecut=300 kd=15.0",
+      "fix": "sweep hit ceiling: extend range; treat results as lower accuracy"
+    },
+    {
+      "check": "relax_convergence",
+      "status": "pass",
+      "detail": "fmax=0.021 eV/A in 2 steps",
+      "fix": ""
+    },
+    {
+      "check": "structure_drift",
+      "status": "pass",
+      "detail": "max displacement 0.019 A (tol 0.5)",
+      "fix": "large drift: double-check the initial structure is sane"
+    },
+    {
+      "check": "band_gap_vs_mp",
+      "status": "pass",
+      "detail": "calc 1.677 eV vs MP ref 1.660 eV (|Δ|=0.017)",
+      "fix": "persistent mismatch: check k-grid/ecut convergence, structure phase, or whether the MP reference is the same polymorph"
+    },
+    {
+      "check": "gap_character",
+      "status": "info",
+      "detail": "direct gap: VBM@K=-2.4046 eV, CBM@K=-0.7274 eV",
+      "fix": ""
+    }
+  ],
+  "blocking_failures": []
+}

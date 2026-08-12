@@ -1,0 +1,21 @@
+[project]
+name = "matmcp"
+version = "0.1.0"
+description = "MCP toolchain for agent-driven DFT workflows (GPAW/QE/VASP adapters)"
+requires-python = ">=3.11"
+dependencies = [
+    "ase>=3.23",
+    "pymatgen>=2024.1",
+    "mp-api>=0.40",
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "fastmcp>=2.10",
+    # gpaw is installed via conda-forge (no reliable pip wheels)
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

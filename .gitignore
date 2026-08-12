@@ -10,5 +10,5 @@ logs/
 # os
 .DS_Store
 Thumbs.db
-docs/resume-draft.md
 *.egg-info/
+docs-private/

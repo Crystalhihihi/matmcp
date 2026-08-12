@@ -12,3 +12,4 @@ logs/
 Thumbs.db
 *.egg-info/
 docs-private/
+.kimi-code/mcp.json

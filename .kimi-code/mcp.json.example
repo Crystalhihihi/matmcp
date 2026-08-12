@@ -4,7 +4,7 @@
       "command": "wsl",
       "args": [
         "-d", "Ubuntu", "--", "bash", "-lc",
-        "source ~/miniforge3/etc/profile.d/conda.sh && conda activate matmcp && cd /mnt/d/材料mcp大串烧 && exec python -m matmcp.server"
+        "source ~/miniforge3/etc/profile.d/conda.sh && conda activate matmcp && cd /mnt/d/YOUR-REPO-PATH && exec python -m matmcp.server"
       ],
       "startupTimeoutMs": 60000,
       "toolTimeoutMs": 7200000

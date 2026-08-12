@@ -4,6 +4,8 @@
 > 零商业 license、零集群，一台笔记本端到端跑通 DFT 工作流。
 > Agent 负责调度，确定性代码负责判断对错——**AI 的每一句结论都必须有机器出处**。
 
+> 注：公开发布时 git 历史已压缩（squash）；开发过程、三轮验收器迭代与全部事故根因记录见 [docs/experiments.md](docs/experiments.md)，关键运行物证在 [evidence/](evidence/README.md)。
+
 [English below](#english)
 
 ## 为什么做这个

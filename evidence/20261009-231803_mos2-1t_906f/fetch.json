@@ -1,0 +1,11 @@
+{
+  "run_id": "20261009-231803_mos2-1t_906f",
+  "query": "mos2-1t",
+  "source": "ase-mx2-builtin",
+  "formula": "MoS2 (monolayer 1T)",
+  "n_atoms": 3,
+  "mp_id": "mp-1238797",
+  "band_gap_ref": 0.0,
+  "is_stable": false,
+  "note": "built-in builder; a/thickness from MP 1T entry mp-1238797 (bulk P-3m1, metallic, e_above_hull 0.296 eV/atom)"
+}

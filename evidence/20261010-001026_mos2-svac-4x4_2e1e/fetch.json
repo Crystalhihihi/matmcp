@@ -1,0 +1,14 @@
+{
+  "run_id": "20261010-001026_mos2-svac-4x4_2e1e",
+  "query": "mos2-svac-4x4",
+  "source": "ase-mx2-builtin-modified",
+  "formula": "Mo16S31",
+  "n_atoms": 47,
+  "defect": "single top-layer S vacancy in 4x4 2H-MoS2 monolayer",
+  "vacancy_cart_A": [
+    1.59,
+    0.918,
+    13.17
+  ],
+  "note": "demo-grade: ecut=300 (2H gate recommendation), 3x3x1, fmax=0.08; no convergence gate by design"
+}

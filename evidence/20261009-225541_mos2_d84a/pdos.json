@@ -1,0 +1,34 @@
+{
+  "run_id": "20261009-225541_mos2_d84a",
+  "engine": "gpaw-pw",
+  "fermi_ev": -1.5511130769003538,
+  "width_ev": 0.15,
+  "npts": 1000,
+  "projections": {
+    "Mo-s": {
+      "n_atoms": 1
+    },
+    "Mo-p": {
+      "n_atoms": 1
+    },
+    "Mo-d": {
+      "n_atoms": 1
+    },
+    "S-s": {
+      "n_atoms": 2
+    },
+    "S-p": {
+      "n_atoms": 2
+    }
+  },
+  "d_band_center": {
+    "value_ev": -3.7571,
+    "channel": "Mo-d",
+    "window": "occupied states (E <= E_F)",
+    "n_atoms": 1,
+    "occupied_d_integral": 2.6359,
+    "full_window_value_ev": -0.7586,
+    "full_window_note": "occupied+unoccupied, nbands-limited by gs.gpw (Norskov-style; less robust than occupied-only)"
+  },
+  "pdos_png": "runs/20261009-225541_mos2_d84a/pdos.png"
+}

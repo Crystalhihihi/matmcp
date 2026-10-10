@@ -1,0 +1,34 @@
+{
+  "run_id": "20261010-001026_mos2-svac-4x4_2e1e",
+  "engine": "gpaw-pw",
+  "fermi_ev": -1.8333208413091358,
+  "width_ev": 0.15,
+  "npts": 1000,
+  "projections": {
+    "Mo-s": {
+      "n_atoms": 16
+    },
+    "Mo-p": {
+      "n_atoms": 16
+    },
+    "Mo-d": {
+      "n_atoms": 16
+    },
+    "S-s": {
+      "n_atoms": 31
+    },
+    "S-p": {
+      "n_atoms": 31
+    }
+  },
+  "d_band_center": {
+    "value_ev": -3.478,
+    "channel": "Mo-d",
+    "window": "occupied states (E <= E_F)",
+    "n_atoms": 16,
+    "occupied_d_integral": 41.7055,
+    "full_window_value_ev": -1.1977,
+    "full_window_note": "occupied+unoccupied, nbands-limited by gs.gpw (Norskov-style; less robust than occupied-only)"
+  },
+  "pdos_png": "runs/20261010-001026_mos2-svac-4x4_2e1e/pdos.png"
+}

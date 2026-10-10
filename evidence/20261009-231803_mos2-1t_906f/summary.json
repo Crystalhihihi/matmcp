@@ -1,0 +1,32 @@
+{
+  "run_id": "20261009-231803_mos2-1t_906f",
+  "engine": "gpaw-pw",
+  "params_verified": true,
+  "total_energy_ev": -21.24126496946226,
+  "fermi_ev": -1.7157482518458302,
+  "band_gap_ev": 0.0,
+  "gap_type": "metallic",
+  "vbm": null,
+  "cbm": null,
+  "dos_at_fermi_per_ev": 0.9078,
+  "kpts_scf": [
+    9,
+    9,
+    1
+  ],
+  "ecut_ev": 400,
+  "band_path": "GMKG",
+  "bands_png": "runs/20261009-231803_mos2-1t_906f/bands.png",
+  "dos_png": "runs/20261009-231803_mos2-1t_906f/dos.png",
+  "metallic_evidence": {
+    "source": "convergence.json metallic_detected",
+    "kpts_sweep_gaps_ev": [
+      0.7163292449173151,
+      0.3918397088667034,
+      0.3170227592397943,
+      0.07231286786440538,
+      0.0982151559630613
+    ],
+    "rule": "gap never stabilized across the k sweep and densest-grid gaps < 3x FD width (0.15 eV): gap is k-sampling noise"
+  }
+}

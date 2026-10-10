@@ -1,0 +1,15 @@
+{
+  "attempts": [
+    {
+      "attempt": 0,
+      "ecut_ev": 400,
+      "kpts_density": 25.0,
+      "relax_converged": true,
+      "params_converged": true,
+      "recommended": {
+        "ecut_ev": 300,
+        "kpts_density": 15.0
+      }
+    }
+  ]
+}

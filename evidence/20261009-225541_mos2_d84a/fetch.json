@@ -1,0 +1,10 @@
+{
+  "run_id": "20261009-225541_mos2_d84a",
+  "query": "mos2",
+  "source": "ase-mx2-builtin",
+  "formula": "MoS2 (monolayer 2H)",
+  "n_atoms": 3,
+  "mp_id": null,
+  "band_gap_ref": 1.66,
+  "note": "built-in builder; ref gap from MP mp-1023924"
+}

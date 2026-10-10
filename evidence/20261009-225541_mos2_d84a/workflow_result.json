@@ -1,0 +1,29 @@
+{
+  "run_id": "20261009-225541_mos2_d84a",
+  "query": "mos2",
+  "status": "pass",
+  "final_params": {
+    "ecut_ev": 400,
+    "kpts_density": 25.0
+  },
+  "n_attempts": 1,
+  "attempts": [
+    {
+      "attempt": 0,
+      "ecut_ev": 400,
+      "kpts_density": 25.0,
+      "relax_converged": true,
+      "params_converged": true,
+      "recommended": {
+        "ecut_ev": 300,
+        "kpts_density": 15.0
+      }
+    }
+  ],
+  "band_gap_ev": 1.6772437290082918,
+  "gap_type": "direct",
+  "verdict": "pass",
+  "blocking_failures": [],
+  "bands_png": "runs/20261009-225541_mos2_d84a/bands.png",
+  "dos_png": "runs/20261009-225541_mos2_d84a/dos.png"
+}

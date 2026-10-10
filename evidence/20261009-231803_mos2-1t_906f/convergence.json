@@ -1,0 +1,111 @@
+{
+  "run_id": "20261009-231803_mos2-1t_906f",
+  "engine": "gpaw-pw",
+  "tol_mev_per_atom": 5.0,
+  "tol_gap_ev": 0.02,
+  "ecut_sweep": [
+    {
+      "ecut_ev": 300,
+      "energy_ev": -21.051522465775744,
+      "gap_ev": 0.39411685688936204,
+      "delta_mev_per_atom": 74.53007900068798,
+      "delta_gap_ev": 0.0022771480226586593
+    },
+    {
+      "ecut_ev": 400,
+      "energy_ev": -21.275112702777808,
+      "gap_ev": 0.3918397088667034,
+      "delta_mev_per_atom": 12.790228477693214,
+      "delta_gap_ev": 0.0002568074042785806
+    },
+    {
+      "ecut_ev": 500,
+      "energy_ev": -21.313483388210887,
+      "gap_ev": 0.3915829014624248,
+      "delta_mev_per_atom": 3.5431652672611356,
+      "delta_gap_ev": 0.00011161330613607134
+    },
+    {
+      "ecut_ev": 600,
+      "energy_ev": -21.32411288401267,
+      "gap_ev": 0.39147128815628873,
+      "delta_mev_per_atom": 3.4082971626610004,
+      "delta_gap_ev": 0.00017338422478441196
+    },
+    {
+      "ecut_ev": 800,
+      "energy_ev": -21.334337775500654,
+      "gap_ev": 0.3912979039315043,
+      "delta_mev_per_atom": null,
+      "delta_gap_ev": null
+    }
+  ],
+  "kpts_sweep": [
+    {
+      "kpts_density": 10.0,
+      "kpts": [
+        3,
+        3,
+        1
+      ],
+      "energy_ev": -21.407427962958558,
+      "gap_ev": 0.7163292449173151,
+      "delta_mev_per_atom": 44.105086726916674,
+      "delta_gap_ev": 0.3244895360506117
+    },
+    {
+      "kpts_density": 15.0,
+      "kpts": [
+        6,
+        6,
+        1
+      ],
+      "energy_ev": -21.275112702777808,
+      "gap_ev": 0.3918397088667034,
+      "delta_mev_per_atom": 11.282577771848898,
+      "delta_gap_ev": 0.0748169496269091
+    },
+    {
+      "kpts_density": 25.0,
+      "kpts": [
+        9,
+        9,
+        1
+      ],
+      "energy_ev": -21.24126496946226,
+      "gap_ev": 0.3170227592397943,
+      "delta_mev_per_atom": 4.143152547133155,
+      "delta_gap_ev": 0.2447098913753889
+    },
+    {
+      "kpts_density": 35.0,
+      "kpts": [
+        12,
+        12,
+        1
+      ],
+      "energy_ev": -21.22883551182086,
+      "gap_ev": 0.07231286786440538,
+      "delta_mev_per_atom": 2.1940205546471248,
+      "delta_gap_ev": 0.025902288098655912
+    },
+    {
+      "kpts_density": 45.0,
+      "kpts": [
+        15,
+        15,
+        1
+      ],
+      "energy_ev": -21.235417573484803,
+      "gap_ev": 0.0982151559630613,
+      "delta_mev_per_atom": null,
+      "delta_gap_ev": null
+    }
+  ],
+  "ecut_converged": true,
+  "kpts_converged": true,
+  "metallic_detected": true,
+  "recommended_ecut_ev": 300,
+  "recommended_kpts_density": 25.0,
+  "converged": true
+}

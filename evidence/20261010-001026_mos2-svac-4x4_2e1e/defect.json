@@ -1,0 +1,18 @@
+{
+  "vacancy_neighbor_mo_indices": [
+    14,
+    0,
+    11
+  ],
+  "note": "Mo-d channel summed over the 3 Mo atoms closest to the vacancy",
+  "gap_state_peak": {
+    "energy_ev_rel_fermi": 0.5708,
+    "channel": "Mo-d summed over vacancy-neighbor 3 Mo",
+    "search_window_ev": [
+      0.1,
+      1.0
+    ],
+    "peak_height_states_per_ev": 4.7144,
+    "method": "argmax of smeared LDOS (width=0.15 eV, npts=1000)"
+  }
+}

@@ -133,6 +133,30 @@ def plot_dos(scf: ScfResult, png: Path, window_ev: float) -> None:
     plt.close(fig)
 
 
+def plot_pdos(e_tot, d_tot, proj: dict, dbc: dict | None, png: Path,
+              window_ev: float) -> None:
+    """Total DOS + element-angular projections, Fermi-aligned; d-band center marked."""
+    fig, ax = plt.subplots(figsize=(6, 4))
+    mask = (e_tot > -window_ev) & (e_tot < window_ev)
+    ax.plot(e_tot[mask], d_tot[mask], color="k", lw=1.2, label="total")
+    for name, (e, d) in proj.items():
+        m = (e > -window_ev) & (e < window_ev)
+        ax.plot(e[m], d[m], lw=1.0, label=name)
+    ax.axvline(0, ls=":", c="k", lw=1)
+    ax.set_xlabel("E - E$_F$ (eV)")
+    ax.set_ylabel("DOS (states/eV)")
+    ax.legend(fontsize=8)
+    if dbc:
+        ax.axvline(dbc["value_ev"], ls="--", c="r", lw=1)
+        ax.annotate(f"d-band center\n{dbc['value_ev']:.2f} eV",
+                    xy=(dbc["value_ev"], ax.get_ylim()[1] * 0.85),
+                    xytext=(dbc["value_ev"] + 0.4, ax.get_ylim()[1] * 0.85),
+                    color="r", fontsize=8)
+    fig.tight_layout()
+    fig.savefig(png, dpi=120)
+    plt.close(fig)
+
+
 def plot_bands(band: ScfResult, path, fermi_ev: float, png: Path,
                window_ev: float) -> None:
     """Band plot along path; energies referenced to the *scf* Fermi level

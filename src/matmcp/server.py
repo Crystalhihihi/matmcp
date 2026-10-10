@@ -56,6 +56,17 @@ def calc_band_dos(run_id: str, ecut: int = 400, kpts_density: float = 30.0,
 
 
 @mcp.tool
+def calc_pdos(run_id: str, window_ev: float = 8.0, width: float = 0.15,
+              npts: int = 1000) -> dict:
+    """Orbital-projected DOS from a finished run's gs.gpw (GPAW runs only):
+    per element x s/p/d channel, Fermi-aligned. Writes pdos.png + pdos.json
+    with the machine-derived d-band center (int E*rho_d / int rho_d over
+    occupied states, E <= E_F)."""
+    return _wrap(workflows.calc_pdos, run_id=run_id, window_ev=window_ev,
+                 width=width, npts=npts)
+
+
+@mcp.tool
 def check_convergence(run_id: str, tol_mev_per_atom: float = 5.0,
                       engine: str = "gpaw") -> dict:
     """Automated convergence test: sweeps plane-wave cutoff and k-point grid,

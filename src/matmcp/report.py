@@ -66,10 +66,12 @@ def _run_section(d: Path) -> str:
                             f"E={relax.get('total_energy_ev'):.3f} eV, "
                             f"ecut={relax.get('ecut_ev')}, kpts={relax.get('kpts')}"))
     if summary:
+        vbm = summary.get("vbm") or {}  # metallic runs store null vbm/cbm
+        cbm = summary.get("cbm") or {}
         rows.append(("能带", f"gap={summary.get('band_gap_ev'):.3f} eV "
                             f"({summary.get('gap_type','?')}, "
-                            f"VBM@{summary.get('vbm',{}).get('label')}, "
-                            f"CBM@{summary.get('cbm',{}).get('label')}), "
+                            f"VBM@{vbm.get('label')}, "
+                            f"CBM@{cbm.get('label')}), "
                             f"Ef={summary.get('fermi_ev'):.2f} eV, "
                             f"engine={summary.get('engine','?')}, "
                             f"scf kpts={summary.get('kpts_scf')}, ecut={summary.get('ecut_ev')}"))

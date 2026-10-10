@@ -179,3 +179,60 @@
   仓库是给面试官看的作品本身，求职话术永远不进仓库。**
 - 规矩 15（审计员发现推广）：**私人工作区与公众门面的边界意识**——交接文档、
   本地路径、额度私话这类"后台"内容，默认不进公开仓库。
+
+## E13 · 首个真实金属体系撞上收敛门：金属性判据曾是合成测试过的死代码（2026-10-09）
+
+- 事实：1T-MoS2 单层（新增内置构建器，a=3.2275/thickness=3.089 Å 取自 MP 体材料 1T 条目
+  mp-1238797，pymatgen 核验 P-3m1 + Mo 八面体 6×2.420 Å）首跑被收敛门
+  `rejected_unconverged`——k 轴扫描 gap 0.73→0.40→0.32→0.069→0.10 eV 振荡不收，
+  能量轴却干净收敛（ΔE 4.1→2.2 meV/atom）。
+- 根因（三层）：
+  1. 审计笔记曾写"金属体系全链路已支持"——实际 `gap_analysis` 的 metallic 分支要求
+     "无任一 Eigenvalue 低于/高于 E_F"，真实金属（带穿过 E_F）永远进不去；
+     该分支只被合成用例测过（E8-S2 修复时）。**审计结论与代码事实脱节**。
+     同类潜伏 bug 随即现身：report.py 的 `summary.get('vbm',{})` 对显式 null
+     返回 None 再 `.get('label')` 崩溃（S2 的同一模式，verify.py 修过 report.py 没修），
+     首个金属 run 一进来记录页就 500。已修（`or {}` 兜底）。
+  2. FD 展宽 0.05 eV 下，占据数判据无法区分金属与小带隙半导体
+     （GaAs gap 0.205 eV 的 CBM 占据数 0.24，任何占据阈值都会把它误判成金属）——
+     单点金属性判据在此展宽下不存在。
+  3. 真正的区分观测量是 **k 点稳定性**：金属的"带隙"是采样噪声（不收敛、趋于 0），
+     半导体的带隙是稳定可观测量（GaAs 在 k 扫描中 Δgap<0.02 稳定通过）。
+- 修复：`check_convergence` k 轴加 smeared-metal 回退——gap 通道全程不稳
+  （无相邻 Δgap<0.02）、最密两网格 gap 均 < 3×FD 展宽（0.15 eV）、能量通道已收敛，
+  三者同时满足才按纯能量判据放行并写 `metallic_detected: true`；
+  `calc_band_dos` 仅在 params_verified 且读到该旗标时把 gap_type 改写为 metallic，
+  证据链（k 扫描 gap 序列）一并进 summary.json 的 `metallic_evidence` 字段。
+  用全部 20 份历史 convergence.json 做了回归：0 误伤（E2 的错网格振荡 1.7–2.0 eV
+  远高于噪声地板，不会误判），1T 正确触发（推荐 kd=25 放行）。
+- 结果：1T 重跑 verdict=pass_with_warnings（唯一 warn = MP is_stable=False，
+  亚稳相如实标注），gap_type=metallic，DOS(E_F)=0.908 states/eV 机器导出；
+  GPAW 日志占据数 1.9917/1.9766 部分占据，独立佐证金属性。
+- **规矩 16：声称"支持 X 类体系"必须有一份真实 X 体系的通过 run，
+  合成用例不算数。**（规矩 2 的推广：测试通过 ≠ 结果正确，合成测试 ≠ 真实覆盖。）
+
+## E14 · GPAW MPI 并行踩坑与根治（2026-10-09/10，P2 缺陷演示）
+
+- 动机：47 原子 S 空位超胞串行 PW 不可行，上 mpirun 并行（环境 24 核 30 GB，
+  conda gpaw 25.7 带 openmpi，`mpirun --allow-run-as-root -np 12 gpaw python`）。
+- 连环坑（逐层剥）：
+  1. `world.bcast` 不存在（gpaw.mpi.MPI 只有 ndarray 版 `broadcast`），mpi4py
+     未随 conda gpaw 安装——用户侧广播不可行，改为**串行 prep + MPI 纯计算**
+     （run_id 经 argv 传入，MPI 进程内零用户侧集合调用）。
+  2. GPAW `synchronize_atoms` 的 pickle 广播在本环境**间歇性竞态**
+     （ValueError: expected 4, got 2，非 0 号 rank；同一脚本曾连过 8 步、也曾第 1 步即崩）。
+  3. 直接把同步 no-op 掉会引发第二故障：ScaLapack 对角化跨 rank 非位级一致
+     → 各 rank 位置漂移 → 第二步 `kd.symmetry.check` 抛 "Broken symmetry!"。
+     **同步不是摆设，是数值必需品。**
+  4. 根治：用可靠的 C 层 ndarray 广播重写同语义同步（rank0 位置/晶胞/原子序/pbc
+     下发），修复后跨 run 逐位复现（fmax 序列 0.9708→0.5767→… 与历史尝试完全一致）。
+     相关性记录在案：携带 checkpoint.cif 写入的两次尝试均在第 2 步触发广播错位
+     （MPI_ERR_TRUNCATE），移除后正常——rank0 文件 I/O 与本环境 C 广播的实现相性存疑。
+  5. 收尾又踩经典 MPI 死锁：rank0 独占调用 `get_eigenvalues`/`get_fermi_level`
+     （GPAW 集合 getter）挂死；重数据（gs.gpw/relax）已落盘，改串行脚本完成记账。
+- 结果：S 空位 demo 完成（fmax 0.073 收敛，带隙 1.076 eV indirect，带隙态
+  局域于空位邻近 Mo，d 带中心上移 0.28 eV），demo 级口径进报告素材。
+- 规矩 17（E10 的补充）：**并行运行时也是可能坏的系统级组件**；
+  环境验证要落到"N rank 跑通目标类型的完整操作（含优化器）"，最小 scf 冒烟不算数。
+- 规矩 18：**MPI 脚本里，集合操作要么全 rank 调用要么不调用**；
+  重数据先落盘、记账可串行后补——把"不可恢复的重计算"和"可重来的轻记账"分开。

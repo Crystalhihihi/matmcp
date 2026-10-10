@@ -13,3 +13,5 @@ Thumbs.db
 *.egg-info/
 docs-private/
 .kimi-code/mcp.json
+# dev scaffolding (kept local)
+tools/_scratch_*

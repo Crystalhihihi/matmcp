@@ -14,16 +14,25 @@ from ase.build import mx2
 from ase.io import read as ase_read
 
 from .config import new_run, repo_rel, write_json
-from .engines import gap_analysis, get_engine, plot_bands, plot_dos
+from .engines import (ScfResult, dos_arrays, gap_analysis, get_engine,
+                      plot_bands, plot_dos, plot_pdos)
 
 # ---------------------------------------------------------------- structures
 
-BUILTIN_BUILDERS = {"mos2-monolayer", "mos2_monolayer", "mos2"}
+BUILTIN_BUILDERS = {"mos2-monolayer", "mos2_monolayer", "mos2",
+                    "mos2-1t", "mos2_1t", "1t-mos2", "mos2-1t-monolayer"}
+BUILTIN_1T = {"mos2-1t", "mos2_1t", "1t-mos2", "mos2-1t-monolayer"}
 
 
 def _build_mos2_monolayer():
     """2H-MoS2 monolayer, a=3.18 A (MP mp-1023924 ref gap ~1.66 eV)."""
     return mx2(formula="MoS2", kind="2H", a=3.18, thickness=3.17, vacuum=10.0)
+
+
+def _build_mos2_1t_monolayer():
+    """1T-MoS2 monolayer, a=3.2275 thickness=3.089 A (MP bulk 1T mp-1238797,
+    P-3m1, metallic, Mo-S 2.42 A octahedral — pymatgen-validated)."""
+    return mx2(formula="MoS2", kind="1T", a=3.2275, thickness=3.089, vacuum=10.0)
 
 
 def fetch_structure(query: str, use_builtin: bool = False) -> dict:
@@ -37,11 +46,20 @@ def fetch_structure(query: str, use_builtin: bool = False) -> dict:
     info: dict = {"run_id": run_id, "query": query}
 
     if use_builtin or query.lower() in BUILTIN_BUILDERS:
-        atoms = _build_mos2_monolayer()
-        atoms.write(run_dir / "structure.cif")
-        info.update(source="ase-mx2-builtin", formula="MoS2 (monolayer 2H)",
-                    n_atoms=len(atoms), mp_id=None, band_gap_ref=1.66,
-                    note="built-in builder; ref gap from MP mp-1023924")
+        if query.lower() in BUILTIN_1T:
+            atoms = _build_mos2_1t_monolayer()
+            atoms.write(run_dir / "structure.cif")
+            info.update(source="ase-mx2-builtin", formula="MoS2 (monolayer 1T)",
+                        n_atoms=len(atoms), mp_id="mp-1238797", band_gap_ref=0.0,
+                        is_stable=False,
+                        note="built-in builder; a/thickness from MP 1T entry mp-1238797 "
+                             "(bulk P-3m1, metallic, e_above_hull 0.296 eV/atom)")
+        else:
+            atoms = _build_mos2_monolayer()
+            atoms.write(run_dir / "structure.cif")
+            info.update(source="ase-mx2-builtin", formula="MoS2 (monolayer 2H)",
+                        n_atoms=len(atoms), mp_id=None, band_gap_ref=1.66,
+                        note="built-in builder; ref gap from MP mp-1023924")
     else:
         with MPRester() as mpr:
             fields = ["material_id", "band_gap", "formula_pretty", "nsites", "is_stable"]
@@ -174,6 +192,25 @@ def calc_band_dos(run_id: str, ecut: int = 400, kpts_density: float = 30.0,
 
     # band gap + VBM/CBM positions from ibz eigenvalues (machine-derived, no eyeballing)
     g = gap_analysis(scf)
+    pv = _params_verified(run_dir, ecut, kpts_density)
+    metallic_evidence = None
+    cj_path = run_dir / "convergence.json"
+    if pv and cj_path.exists():
+        import json as _json
+        try:
+            cjd = _json.loads(cj_path.read_text())
+        except Exception:
+            cjd = {}
+        if cjd.get("metallic_detected"):
+            # gate-level metallic verdict overrides the single-grid eigenvalue
+            # "gap", which is k-sampling noise for a metal in the smeared regime
+            metallic_evidence = {
+                "source": "convergence.json metallic_detected",
+                "kpts_sweep_gaps_ev": [r.get("gap_ev") for r in cjd.get("kpts_sweep", [])],
+                "rule": "gap never stabilized across the k sweep and densest-grid "
+                        "gaps < 3x FD width (0.15 eV): gap is k-sampling noise",
+            }
+            g = {"gap": None, "vbm": None, "cbm": None, "gap_type": "metallic"}
     gap = g["gap"] if g["gap"] is not None else 0.0
 
     # band structure along a high-symmetry path
@@ -186,25 +223,101 @@ def calc_band_dos(run_id: str, ecut: int = 400, kpts_density: float = 30.0,
 
     # DOS from the scf grid
     plot_dos(scf, run_dir / "dos.png", window_ev)
+    e_dos, d_dos = dos_arrays(scf)
+    dos_at_fermi = float(np.interp(0.0, e_dos, d_dos))
 
     summary = {
         "run_id": run_id,
         "engine": eng.name,
-        "params_verified": _params_verified(run_dir, ecut, kpts_density),
+        "params_verified": pv,
         "total_energy_ev": scf.energy_ev,
         "fermi_ev": scf.fermi_ev,
         "band_gap_ev": gap,
         "gap_type": g["gap_type"],
         "vbm": g["vbm"],
         "cbm": g["cbm"],
+        "dos_at_fermi_per_ev": round(dos_at_fermi, 4),
         "kpts_scf": kpts,
         "ecut_ev": ecut,
         "band_path": path_str or "auto-3d",
         "bands_png": repo_rel(run_dir / "bands.png"),
         "dos_png": repo_rel(run_dir / "dos.png"),
     }
+    if metallic_evidence is not None:
+        summary["metallic_evidence"] = metallic_evidence
     write_json(run_dir / "summary.json", summary)
     if not summary["params_verified"]:
         summary["verification_note"] = ("no convergence gate passed at these "
                                         "parameters — treat results as unverified")
     return summary
+
+
+# -------------------------------------------------------------------- PDOS
+
+def calc_pdos(run_id: str, window_ev: float = 8.0, width: float = 0.15,
+              npts: int = 1000) -> dict:
+    """Orbital-projected DOS from a finished run's gs.gpw (GPAW leg only).
+
+    Projections summed per element x angular channel (s/p/d). d-band center
+    = trapezoid(E*rho_d)/trapezoid(rho_d) over occupied states (E <= E_F),
+    energies relative to the scf Fermi level. Writes pdos.json + pdos.png."""
+    from gpaw import GPAW  # GPAW leg only: QE runs carry no gs.gpw
+
+    from .config import RUNS, verify_run_id
+    run_dir = RUNS / verify_run_id(run_id)
+    gpw = run_dir / "gs.gpw"
+    if not gpw.exists():
+        raise ValueError(f"{run_id}: no gs.gpw — run calc_band_dos (gpaw) first")
+    calc = GPAW(str(gpw))
+    ef = float(calc.get_fermi_level())
+    symbols = calc.atoms.get_chemical_symbols()
+
+    kpts_ibz = calc.get_ibz_k_points()
+    evals = np.array([calc.get_eigenvalues(kpt=k) for k in range(len(kpts_ibz))])
+    scf = ScfResult(None, ef, evals, np.asarray(kpts_ibz),
+                    np.asarray(calc.get_k_point_weights()))
+    e_tot, d_tot = dos_arrays(scf, width=width, npts=npts)
+
+    proj = {}
+    for el in sorted(set(symbols)):
+        for ang in ("s", "p", "d"):
+            acc, grid = None, None
+            for a, s in enumerate(symbols):
+                if s != el:
+                    continue
+                e, ld = calc.get_orbital_ldos(a, angular=ang, npts=npts, width=width)
+                grid, acc = e, (ld if acc is None else acc + ld)
+            if acc is not None and float(acc.max()) > 1e-3:
+                proj[f"{el}-{ang}"] = (np.asarray(grid, dtype=float) - ef, acc)
+
+    d_key = next((k for k in proj if k.endswith("-d")), None)
+    dbc = None
+    if d_key is not None:
+        e, d = proj[d_key]
+
+        def _center(mask):
+            num = float(np.trapezoid((e * d)[mask], e[mask]))
+            den = float(np.trapezoid(d[mask], e[mask]))
+            return round(num / den, 4), round(den, 4)
+
+        occ_v, occ_i = _center(e <= 0.0)
+        full_v, full_i = _center(np.ones_like(e, dtype=bool))
+        dbc = {"value_ev": occ_v, "channel": d_key,
+               "window": "occupied states (E <= E_F)",
+               "n_atoms": symbols.count(d_key.split("-")[0]),
+               "occupied_d_integral": occ_i,
+               "full_window_value_ev": full_v,
+               "full_window_note": "occupied+unoccupied, nbands-limited by gs.gpw "
+                                   "(Norskov-style; less robust than occupied-only)"}
+
+    plot_pdos(e_tot, d_tot, proj, dbc, run_dir / "pdos.png", window_ev)
+    result = {
+        "run_id": run_id, "engine": "gpaw-pw", "fermi_ev": ef,
+        "width_ev": width, "npts": npts,
+        "projections": {k: {"n_atoms": symbols.count(k.split("-")[0])}
+                        for k in proj},
+        "d_band_center": dbc,
+        "pdos_png": repo_rel(run_dir / "pdos.png"),
+    }
+    write_json(run_dir / "pdos.json", result)
+    return result

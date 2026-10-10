@@ -38,7 +38,9 @@ def check_convergence(run_id: str, ecuts=(300, 400, 500, 600, 800),
       loose pathology backstop (< ecut_energy_tol_mev_per_atom).
     - k-grid: BOTH |ΔE| < tol_mev_per_atom AND |Δgap| < tol_gap_ev — k-point
       sampling error is a real physical error in both channels.
-    Metallic systems (no gap) fall back to the energy criterion alone.
+    Metallic systems (no gap) fall back to the energy criterion alone; the
+    smeared-metal regime (gap unstable across the sweep, final gaps below 3x the
+    FD width) is detected the same way and flags metallic_detected=True.
     Duplicate k-grids (after symmetry-aware rounding) are evaluated once."""
     from .config import verify_run_id
     run_dir = RUNS / verify_run_id(run_id)
@@ -99,11 +101,32 @@ def check_convergence(run_id: str, ecuts=(300, 400, 500, 600, 800),
 
     rec_ecut, ok_e = recommend(ek, "ecut_ev", ecut_energy_tol_mev_per_atom)
     rec_kd, ok_k = recommend(kk, "kpts_density", tol_mev_per_atom)
+    metallic = False
+    if not ok_k:
+        # Smeared-metal regime: the "gap" is k-sampling noise — never stabilizes,
+        # densest grids sit below 3x the FD smearing width — while the energy
+        # channel converges. Gate the k-axis on energy alone and flag the run
+        # metallic (calc_band_dos reads metallic_detected from convergence.json).
+        # Real gaps do NOT fire this: they stabilize (E2 wrong-grid oscillations
+        # sit at ~1.7-2.0 eV, far above the smearing scale). Regression-checked
+        # against all historical sweeps.
+        from .engines import FD_WIDTH_EV
+        dgaps = [r["delta_gap_ev"] for r in kk[:-1]]
+        never_stable = all(d is None or d >= tol_gap_ev for d in dgaps)
+        tail = [r["gap_ev"] for r in kk][-2:]
+        small_tail = all(g is not None and g < 3 * FD_WIDTH_EV for g in tail)
+        if never_stable and small_tail:
+            for r in kk:
+                dE = r["delta_mev_per_atom"]
+                if dE is not None and dE < tol_mev_per_atom:
+                    rec_kd, ok_k, metallic = r["kpts_density"], True, True
+                    break
     result = {
         "run_id": run_id, "engine": eng.name, "tol_mev_per_atom": tol_mev_per_atom,
         "tol_gap_ev": tol_gap_ev,
         "ecut_sweep": ek, "kpts_sweep": kk,
         "ecut_converged": ok_e, "kpts_converged": ok_k,
+        "metallic_detected": metallic,
         "recommended_ecut_ev": int(rec_ecut),
         "recommended_kpts_density": float(rec_kd),
         "converged": bool(ok_e and ok_k),

@@ -101,7 +101,8 @@ MCP 客户端配置（Kimi Code 示例，`.kimi-code/mcp.json` 已随仓库提�
 |---|---|
 | `fetch_structure` | MP 按化学式/mp-id 拉结构，或内置构建器；返回 run_id + MP 参考带隙 |
 | `relax_structure` | GPAW 结构弛豫，返回能量/残余力/收敛性 |
-| `calc_band_dos` | 能带+DOS，机器导出带隙/VBM/CBM/直接间接属性 |
+| `calc_band_dos` | 能带+DOS，机器导出带隙/VBM/CBM/直接间接属性/费米处 DOS |
+| `calc_pdos` | 轨道投影 DOS（元素×s/p/d），机器导出 d 带中心（仅 GPAW 腿，需 gs.gpw） |
 | `check_convergence` | 截断能/k 点自动收敛测试，给出推荐参数 |
 | `verify_run` | 物理校验：弛豫、漂移、带隙 vs MP，pass/warn/fail + 修复建议 |
 | `run_verified_workflow` | **默认入口**：全流程 + 收敛门 + 自动重试 + 验收 |
